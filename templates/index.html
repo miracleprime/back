@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Екатеринбург</title>
+    <base href="/">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=918&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://yandex.st/jquery/2.2.3/jquery.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header1" id="header1">
+            <nav class="main-header">
+                <ul class="navigation">
+                    <li class="navigationItem"><a href="#gallerySection">Галерея</a></li>
+                    <li class="navigationItem"><a href="#mapSection">Карта</a></li>
+                    <li class="navigationItem"><a href="#header1">В начало</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="headerMain">
+            <img src="img/main photo.jpg" alt="Главное фото" width="1270" height="500">
+            <h1>Екатеринбург</h1>
+        </section>
+        <section class="event0">
+            <div class="event event-1">
+                <div class="content">
+                    <h3>Ельцин Центр</h3>
+                    <p>Ельцин Центр в Екатеринбурге - это не просто музей, а современный культурный комплекс, посвященный жизни
+                         и наследию первого президента России Бориса Ельцина. Здесь вы найдете интерактивные выставки, рассказывающие об истории перестройки и становления новой России,
+                          сможете изучить подлинные документы в архивах и библиотеке, насладиться панорамным видом на город с высоты птичьего полета, а также посетить концерты, лекции и другие мероприятия</p>
+                </div>
+                <img src="img/event-01.jpg" alt="ивент 1" width="610" height="260">
+            </div>
+            <div class="event event-2 shorter">
+                <div class="content">
+                    <h3>Храм-на-Крови</h3>
+                    <p>Храм-на-Крови в Екатеринбурге – это величественный храм, возведенный на месте убийства императора Александра II. 
+                        Он сочетает в себе русско-византийский стиль с элементами модерна. Внутри вас ждут мозаики, иконостас, витражи и уникальный иконописный набор.
+                         Нижний храм хранит музей, посвященный последним дням царской семьи. Запланируйте минимум 1,5 часа на осмотр, не пропустите нижний храм и возьмите аудиогид.
+                          Храм-на-Крови – это место паломничества, духовного поиска и памятник трагической истории России.</p>
+                </div>
+                <img src="img/event-02.jpeg" alt="ивент 2" width="610" height="260">
+            </div>
+            <div class="event event-3 shorter">
+                <div class="content">
+                    <h3>Высоцкий</h3>
+                    <p>Высоцкий — это современный проект, который предполагает создание уникального
+                         жилого комплекса с выделенным местом для общественного пространства и отдыха, вдохновлённого творчеством Владимира Высоцкого.
+                          Он ориентирован на создание комфортабельных апартаментов и интеграцию элементов культурного наследия города.</p>
+                </div>
+                <img src="img/event-03.jpg" alt="ивент 3" width="610" height="260">
+            </div>
+        </section>
+        <section class="gallery" id="gallerySection">
+            <h2>Галерея</h2>
+            <div class="photos">
+                <img class="active-img" src="img/gallery photo 1.jpg" alt="фото" width="970" height="690">
+                <ul class="set-photos">
+                    <li class="viewing">
+                        <a href="img/gallery photo 2.jpg" data-image="img/gallery photo 2.jpg"><img src="img/preview gallery photo 2.jpg" alt="фото" width="170" height="150"></a>
+                    </li>
+                    <li class="viewing">
+                        <a href="img/gallery photo 3.jpg" data-image="img/gallery photo 3.jpg"><img src="img/preview gallery photo 3.jpg" alt="фото" width="170" height="150"></a>
+                    </li>
+                    <li class="viewing">
+                        <a href="img/gallery photo 4.jpeg" data-image="img/gallery photo 4.jpeg"><img src="img/preview gallery photo 4.jpeg" alt="фото" width="170" height="150"></a>
+                    </li>
+                    <li class="viewing">
+                        <a href="img/gallery photo 5.jpg" data-image="img/gallery photo 5.jpg"><img src="img/preview gallery photo 5.jpg" alt="фото" width="170" height="150"></a>
+                    </li>
+                    <li class="viewing">
+                        <a href="img/gallery photo 1.jpg" data-image="img/gallery photo 1.jpg" class="active"><img src="img/preview gallery photo 1.jpg" alt="фото" width="170" height="150"></a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section class="sections" id="mapSection">
+            <div class="interactiveMap">
+                <h2>Карта</h2>
+                <div class="categories">
+                    <label for="categorySelect">Категория:</label>
+                    <select id="categorySelect">
+                        <option value="">Все</option>
+                        <option value="entertainment">Развлечения</option>
+                        <option value="historical">Исторические объекты</option>
+                        <option value="none">Ничего</option>
+                    </select>
+        
+                    <button id="addPlaceButton">Добавить место</button>
+        
+                    <div id="addPlaceForm" style="display: none;">
+                        <h3>Добавить новое место</h3>
+                        <input type="text" id="placeName" placeholder="Название места"><br>
+                        <textarea id="placeDescription" placeholder="Описание места"></textarea><br>
+                        <select id="placeCategory">
+                            <option value="entertainment">Развлечения</option>
+                            <option value="historical">Исторические объекты</option>
+                            <!-- Добавьте другие категории -->
+                        </select><br>
+                        <input type="text" id="placeLatitude" placeholder="Широта"><br>
+                        <input type="text" id="placeLongitude" placeholder="Долгота"><br>
+                        <input type="text" id="placePhoto" placeholder="URL изображения"><br>
+                        <button id="savePlaceButton">Сохранить</button>
+                        <button id="cancelAddPlaceButton">Отмена</button>
+                    </div>
+        
+                    <div id="map"></div>
+                </div>
+        </section>
+        <section class="sections" id="moderateSection">
+            <div class="interactiveMap">
+                <h2>Модерация мест</h2>
+                <ul id="pendingRoutesList"></ul>
+            </div>
+        </section>
+    <script src="js/script.js"></script>
+</body>
+</html>
