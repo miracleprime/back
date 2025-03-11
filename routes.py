@@ -1,10 +1,15 @@
-from flask import Flask, jsonify, request, url_for
+from flask import Flask, jsonify, request, url_for, session, render_template, redirect, Blueprint
 from flask_cors import CORS
-from models import app, db, Route
+from models import db, Route, User
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
-CORS(app, resources={r"/*": {"origins": "*"}})
+routes_bp = Blueprint('routes', __name__)
 
-@app.route('/api/routes', methods=['GET', 'POST'])
+CORS(routes_bp, resources={r"/*": {"origins": "*"}})
+
+# Маршруты для API работы с местами (routes)
+@routes_bp.route('/api/routes', methods=['GET', 'POST'])
 def get_routes():
     if request.method == 'GET':
         activity_type = request.args.get('activity_type')
@@ -29,10 +34,9 @@ def get_routes():
                 'drinking_fountains': route.drinking_fountains,
                 'latitude': float(route.latitude),
                 'longitude': float(route.longitude),
-                'photo': route.photo,  # Добавлено поле photo - **ОШИБКА**
+                'photo': route.photo,
                 'approved': route.approved
             }
-             # Добавлено логирование
             route_list.append(route_data)
 
         return jsonify(route_list)
@@ -52,7 +56,7 @@ def get_routes():
             drinking_fountains=False,
             calories=0,
             relief='Неизвестно',
-            approved=False  # По умолчанию не одобрено
+            approved=False
         )
         db.session.add(new_route)
         db.session.commit()
@@ -60,11 +64,10 @@ def get_routes():
 
     return jsonify({'message': 'Метод не разрешен'}), 405
 
-
-@app.route('/api/moderate', methods=['GET', 'POST'])
+# Маршруты для API модерации мест
+@routes_bp.route('/api/moderate', methods=['GET', 'POST'])
 def moderate_routes():
     if request.method == 'GET':
-        # Получить список мест, ожидающих модерации
         pending_routes = Route.query.filter_by(approved=False).all()
         route_list = []
         for route in pending_routes:
@@ -82,7 +85,7 @@ def moderate_routes():
                 'drinking_fountains': route.drinking_fountains,
                 'latitude': float(route.latitude),
                 'longitude': float(route.longitude),
-                 'photo': route.photo,  # Добавлено поле photo **ИСПРАВЛЕННО**
+                'photo': route.photo,
                 'approved': route.approved
             }
             route_list.append(route_data)
@@ -103,3 +106,63 @@ def moderate_routes():
         else:
             return jsonify({'message': 'Место не найдено'}), 404
     return jsonify({'message': 'Метод не разрешен'}), 405
+
+# Маршруты для регистрации и входа пользователей
+# routes.py
+
+@routes_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username'] # ***ДОБАВЛЕНО***
+        password = request.form['password'] # ***ДОБАВЛЕНО***
+
+        if not username or not password:
+            error = 'Пожалуйста, заполните все поля.'
+        elif len(username) < 3:
+            error = 'Имя пользователя должно быть не менее 3 символов.'
+        elif len(password) < 6:
+            error = 'Пароль должен быть не менее 6 символов.'
+        else:
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                error = 'Пользователь с таким именем уже существует.'
+            else:
+                try:
+                    hashed_password = generate_password_hash(password)
+                    new_user = User(username=username, password=hashed_password)
+                    db.session.add(new_user)
+                    db.session.commit()
+                    return redirect(url_for('routes.login'))
+                except Exception as e:
+                    db.session.rollback()
+                    error = 'Произошла ошибка при регистрации: ' + str(e)
+
+    return render_template('register.html', error=error)
+
+
+@routes_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            session['username'] = username
+            return redirect(url_for('routes.index'))
+        else:
+            return render_template('login.html', error='Неверный логин или пароль')
+
+    return render_template('login.html')
+@routes_bp.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('routes.login'))
+
+# Пример главной страницы (потребуется изменить)
+@routes_bp.route('/')
+def index():
+    if 'username' in session:
+        return render_template('index.html', username=session['username'])
+    else:
+        return redirect(url_for('routes.login'))

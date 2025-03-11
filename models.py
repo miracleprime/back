@@ -1,17 +1,8 @@
+# models.py
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
-import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
-app.config.from_object('config.Config')
-
-# Ensure the instance folder exists:
-try:
-    os.makedirs(app.instance_path)
-except OSError:
-    pass
-
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 class Route(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,7 +11,7 @@ class Route(db.Model):
     activity_type = db.Column(db.String(50), nullable=False)
     difficulty = db.Column(db.String(50), nullable=False)
     distance = db.Column(db.Float, nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
+    duration = db.Column(db.Integer, nullable=True)
     calories = db.Column(db.Integer, nullable=True)
     relief = db.Column(db.String(200), nullable=True)
     rest_zones = db.Column(db.Boolean, default=False)
@@ -32,3 +23,17 @@ class Route(db.Model):
 
     def __repr__(self):
         return f'<Route {self.name}>'
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
