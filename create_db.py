@@ -3,6 +3,7 @@
 from models import app, db
 
 with app.app_context():
-    pass #  Удаляем db.create_all(), т.к. миграции это делают
+    pass
+    db.create_all(),
 
 print("Таблицы базы данных (при необходимости) успешно созданы!")

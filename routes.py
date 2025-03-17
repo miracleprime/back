@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request, url_for, session, render_template, redirect, Blueprint
 from flask_cors import CORS
-from models import db, Route, User
+from models import db, Route, User, Review
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 routes_bp = Blueprint('routes', __name__)
+template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'D:\\reserv\\frond')
 
 CORS(routes_bp, resources={r"/*": {"origins": "*"}})
 
@@ -163,6 +164,70 @@ def logout():
 @routes_bp.route('/')
 def index():
     if 'username' in session:
-        return render_template('index.html', username=session['username'])
+        username = session['username']
+        user = User.query.filter_by(username=username).first()
+        if user:
+            routes = Route.query.all()  # Получаем все маршруты
+            return render_template('index.html', username=username, routes=routes)
+        else:
+            return 'Пользователь не найден', 404
     else:
         return redirect(url_for('routes.login'))
+
+@routes_bp.route('/api/routes/<int:route_id>/reviews', methods=['GET', 'POST'])
+def route_reviews(route_id):
+    route = Route.query.get_or_404(route_id)
+
+    if request.method == 'GET':
+        reviews = Review.query.filter_by(route_id=route_id).all()
+        review_list = []
+        for review in reviews:
+            review_data = {
+                'id': review.id,
+                'user_id': review.user_id,
+                'username': review.user.username,
+                'text': review.text,
+                'rating': review.rating,
+                'timestamp': review.timestamp.isoformat()
+            }
+            review_list.append(review_data)
+        return jsonify(review_list)
+
+
+    elif request.method == 'POST':
+        if 'username' not in session:
+            return jsonify({'error': 'Требуется авторизация'}), 401
+
+        data = request.get_json()
+        text = data.get('text')
+        rating = data.get('rating')
+
+        if not text or not rating:
+            return jsonify({'error': "Пожалуйста, заполните все поля."}), 400
+
+        if not (1 <= int(rating) <= 5):
+            return jsonify({'error': "Оценка должна быть от 1 до 5"}), 400
+
+        user = User.query.filter_by(username=session['username']).first()
+        if not user:
+            return jsonify({'error': "Пользователь не найден"}), 404
+
+        new_review = Review(route_id=route_id, user_id=user.id, text=text, rating=rating)
+        db.session.add(new_review)
+        db.session.commit()
+        return jsonify({'message': "Отзыв успешно добавлен"}), 201
+@routes_bp.route('/api/username', methods=['GET'])
+def get_username():
+    if 'username' in session:
+        return jsonify({'username': session['username']})
+    else:
+        return jsonify({'username': None})
+
+from flask import render_template, jsonify
+
+@routes_bp.route('/render_template', methods=['POST'])
+def render_template_route():
+    data = request.get_json()
+    template = data['template']
+    context = data['data']
+    return render_template(template, **context)

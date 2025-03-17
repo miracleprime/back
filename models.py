@@ -1,6 +1,9 @@
 # models.py
 from flask_sqlalchemy import SQLAlchemy
+from pip._internal.utils import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime  # Ensure the standard datetime is imported
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -37,3 +40,18 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    route_id = db.Column(db.Integer, db.ForeignKey('route.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)  # Оценка от 1 до 5
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # Use utcnow for consistency
+
+    route = db.relationship('Route', backref=db.backref('review', lazy=True))
+    user = db.relationship('User', backref=db.backref('review', lazy=True))
+
+    def __repr__(self):
+        return f'<Review {self.id} for Route {self.route_id}>'
