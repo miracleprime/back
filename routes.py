@@ -9,7 +9,7 @@ template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'D:\\
 
 CORS(routes_bp, resources={r"/*": {"origins": "*"}})
 
-# Маршруты для API работы с местами (routes)
+#  места (routes)
 @routes_bp.route('/api/routes', methods=['GET', 'POST'])
 def get_routes():
     if request.method == 'GET':
@@ -94,7 +94,7 @@ def moderate_routes():
     elif request.method == 'POST':
         data = request.get_json()
         route_id = data['id']
-        action = data['action']  # 'approve' или 'reject'
+        action = data['action']
 
         route = Route.query.get(route_id)
         if route:
@@ -109,14 +109,13 @@ def moderate_routes():
     return jsonify({'message': 'Метод не разрешен'}), 405
 
 # Маршруты для регистрации и входа пользователей
-# routes.py
 
 @routes_bp.route('/register', methods=['GET', 'POST'])
 def register():
     error = None
     if request.method == 'POST':
-        username = request.form['username'] # ***ДОБАВЛЕНО***
-        password = request.form['password'] # ***ДОБАВЛЕНО***
+        username = request.form['username']
+        password = request.form['password']
 
         if not username or not password:
             error = 'Пожалуйста, заполните все поля.'

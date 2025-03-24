@@ -74,16 +74,16 @@ with app.app_context():
                 name=poi['name'],
                 description=poi['description'],
                 activity_type=category,
-                difficulty='неизвестно',  # или какое-то значение по умолчанию
-                distance=0,  # или какое-то значение по умолчанию
-                duration=0,  # или какое-то значение по умолчанию
+                difficulty='неизвестно',
+                distance=0,
+                duration=0,
                 latitude=poi['coordinates'][0],
                 longitude=poi['coordinates'][1],
                 photo=poi['photo'],
-                rest_zones=False,  # или какое-то значение по умолчанию
-                drinking_fountains=False,  # или какое-то значение по умолчанию
-                calories=0,  # или какое-то значение по умолчанию
-                relief='Неизвестно'  # или какое-то значение по умолчанию
+                rest_zones=False,
+                drinking_fountains=False,
+                calories=0,
+                relief='Неизвестно'
             )
             db.session.add(route)
     db.session.commit()

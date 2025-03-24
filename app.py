@@ -5,7 +5,7 @@ from models import db, User
 from config import Config
 from flask_migrate import Migrate
 
-app = Flask(__name__, static_folder='D:\\reserv\\frond\\static', template_folder='D:\\reserv\\frond') #  Убедись, что это ПРАВИЛЬНЫЙ путь!
+app = Flask(__name__, static_folder='D:\\reserv\\frond\\static', template_folder='D:\\reserv\\frond')
 app.config.from_object(Config)
 
 db.init_app(app)
@@ -13,7 +13,7 @@ migrate = Migrate(app, db)
 
 app.register_blueprint(routes_bp)
 
-app.secret_key = app.config['SECRET_KEY']  # Инициализируем сессии с секретным ключом
+app.secret_key = app.config['SECRET_KEY']
 
 if __name__ == '__main__':
     app.run(debug=True)

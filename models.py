@@ -48,7 +48,7 @@ class Review(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)  # Оценка от 1 до 5
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # Use utcnow for consistency
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     route = db.relationship('Route', backref=db.backref('review', lazy=True))
     user = db.relationship('User', backref=db.backref('review', lazy=True))
